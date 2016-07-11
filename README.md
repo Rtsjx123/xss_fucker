@@ -36,3 +36,5 @@ $hf = new htmlFilter();
 echo $hf->safeHTML($test);
 
 ```
+
+*DEMO: [http://demo.fvck.in/xss_fucker/](http://demo.fvck.in/xss_fucker)*
