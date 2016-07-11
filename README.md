@@ -36,5 +36,3 @@ $hf = new htmlFilter();
 echo $hf->safeHTML($test);
 
 ```
-
-> **注意：**目前对基于CSS表达式的XSS载荷尚无过滤功能，正在编写相关逻辑。
