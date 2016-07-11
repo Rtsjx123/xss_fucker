@@ -13,11 +13,11 @@ class htmlFilter
     private $_safeDom = null;
     private $_uf = null;
     
-    //£º£º£ºÑ¡Ïî£º£º£ºÊÇ·ñÔÚÊäÈëÊı¾İÖĞÎŞ·¨ÕÒµ½ÈÎÒâÓĞĞ§HTML±êÇ©Ê±³¢ÊÔ×Ô¶¯±ÕºÏ
-    //¸ÃÑ¡Ïî¿ÉÒÔ¹ıÂËÀàËÆÓÚinputµÄvalue×¢Èë»òimgµÄsrc×¢Èë»òÆäËûdom×¢Èë£¬ÀıÈç£ºx" onerror="alert(/xss/)µÄpayload¿ÉÒÔ±»ÍêÕû¹ıÂË
-    //µ«¸ÃÑ¡Ïî¿ªÆô¿ÉÄÜ»áÔì³É´íÎó¹ıÂË£¬ÀıÈçÊäÈë£ºif select == "abcdefg" or select >= 5 then aaa = "ccc"
-    //½«²úÉúÊä³ö£ºif select == ">= 5 then aaa = "ccc"
-    //Çë×ÔĞĞ¾ö¶¨ÊÇ·ñÄ¬ÈÏ¿ªÆô£¬»òÊ¹ÓÃsetAutoClosing·½·¨½«Æä¶¯Ì¬¿ª¹Ø
+    //ï¼šï¼šï¼šé€‰é¡¹ï¼šï¼šï¼šæ˜¯å¦åœ¨è¾“å…¥æ•°æ®ä¸­æ— æ³•æ‰¾åˆ°ä»»æ„æœ‰æ•ˆHTMLæ ‡ç­¾æ—¶å°è¯•è‡ªåŠ¨é—­åˆ
+    //è¯¥é€‰é¡¹å¯ä»¥è¿‡æ»¤ç±»ä¼¼äºinputçš„valueæ³¨å…¥æˆ–imgçš„srcæ³¨å…¥æˆ–å…¶ä»–domæ³¨å…¥ï¼Œä¾‹å¦‚ï¼šx" onerror="alert(/xss/)çš„payloadå¯ä»¥è¢«å®Œæ•´è¿‡æ»¤
+    //ä½†è¯¥é€‰é¡¹å¼€å¯å¯èƒ½ä¼šé€ æˆé”™è¯¯è¿‡æ»¤ï¼Œä¾‹å¦‚è¾“å…¥ï¼šif select == "abcdefg" or select >= 5 then aaa = "ccc"
+    //å°†äº§ç”Ÿè¾“å‡ºï¼šif select == ">= 5 then aaa = "ccc"
+    //è¯·è‡ªè¡Œå†³å®šæ˜¯å¦é»˜è®¤å¼€å¯ï¼Œæˆ–ä½¿ç”¨setAutoClosingæ–¹æ³•å°†å…¶åŠ¨æ€å¼€å…³
     private $_opt_autoclosing = true;
 
     const ERR_CODE_OK = 0;
@@ -34,9 +34,9 @@ class htmlFilter
 
 
     /*
-     * ÉèÖÃ°×Ãûµ¥±êÇ©£¬¼°ÔÊĞíµÄÊôĞÔ£¬³ı·Ç¸Ã±êÇ©ÊÇ°×Ãûµ¥£¬·ñÔò°şÀë¸Ã±êÇ©£¨µ«±£Áô±êÇ©ÄÚÈİ£©
-     * ×¢Òâ£¬ÕâÀï¸ù¾İÊµ¼ÊĞèÒªÍ¬ÑùÒÆ³ıÁËform±êÇ©£¬ÒÔ·ÀÖ¹ÓÃ»§Î±ÔìÒ»¸öµÇÂ¼»òËÑ¼¯ĞÅÏ¢µÄ±íµ¥¡£
-     * ¸Ã²ÎÊıÈ«ÎªĞ¡Ğ´
+     * è®¾ç½®ç™½åå•æ ‡ç­¾ï¼ŒåŠå…è®¸çš„å±æ€§ï¼Œé™¤éè¯¥æ ‡ç­¾æ˜¯ç™½åå•ï¼Œå¦åˆ™å‰¥ç¦»è¯¥æ ‡ç­¾ï¼ˆä½†ä¿ç•™æ ‡ç­¾å†…å®¹ï¼‰
+     * æ³¨æ„ï¼Œè¿™é‡Œæ ¹æ®å®é™…éœ€è¦åŒæ ·ç§»é™¤äº†formæ ‡ç­¾ï¼Œä»¥é˜²æ­¢ç”¨æˆ·ä¼ªé€ ä¸€ä¸ªç™»å½•æˆ–æœé›†ä¿¡æ¯çš„è¡¨å•ã€‚
+     * è¯¥å‚æ•°å…¨ä¸ºå°å†™
      */
     private $_ALLOW_TAGS = array(
         "a" => array("class", "title", "style", "dir", "lang", "xml:lang", "charset", "coords", "href", "hreflang", "name", "rel", "rev", "shape", "target", "type"),
@@ -110,7 +110,7 @@ class htmlFilter
         "var" => array("class", "title", "style", "dir", "lang", "xml:lang"),
         "section" => array("class", "title", "style", "dir", "lang", "xml:lang"),
 
-        //Ò»Ğ©H5ÌØÓĞµÄ±êÇ©
+        //ä¸€äº›H5ç‰¹æœ‰çš„æ ‡ç­¾
         "article" => array("class", "title", "style", "dir", "lang", "xml:lang", "spellcheck", "translate", "hidden", "dropzone", "draggable", "contenteditable"),
         "aside" => array("class", "title", "style", "dir", "lang", "xml:lang", "spellcheck", "translate", "hidden", "dropzone", "draggable", "contenteditable"),
         "audio" => array("class", "title", "style", "dir", "lang", "xml:lang", "spellcheck", "translate", "hidden", "dropzone", "draggable", "contenteditable", "autoplay", "controls", "loop", "muted", "preload", "src"),
@@ -128,19 +128,19 @@ class htmlFilter
         "video" => array("class", "title", "style", "dir", "lang", "xml:lang", "spellcheck", "translate", "hidden", "dropzone", "draggable", "contenteditable", "autoplay", "controls", "height", "loop", "muted", "poster", "preload", "src", "width"),
         "wbr" => array("class", "title", "style", "dir", "lang", "xml:lang", "spellcheck", "translate", "hidden", "dropzone", "draggable", "contenteditable"),
 
-        //ÆäËûÒ»Ğ©×Ô¶¨Òå±êÇ©
+        //å…¶ä»–ä¸€äº›è‡ªå®šä¹‰æ ‡ç­¾
         "code" => array(),
         "comment" => array(),
         "_" => array(
             "class","title","style","dir","lang","xml:lang","charset","coords","href","hreflang","name","rel","rev","shape","target","type","alt","nohref","cite","tabindex","disabled","value","size","alignspan","align","char","charoff","span","valign","width","datetime","data-widget-type","data-widget-config","allowscriptaccess","allownetworking","flashvars","height","quality","src","var","wmode","border","contenteditable","pluginspage","play","loop","menu","color","face","noshade","behavior","direction","scrolldelay","scrollamount","vspace","hspace","bgcolor","contextmenu","draggable","irrelevant","ref","registrationmark","template","ismap","long","desc","usemap","checked","maxlength","readonly","for","compact","start","label","selected","xml:space","accesskey","multiple","cellpadding","cellspacing","frame","rules","summary","abbr","axis","colspan","headers","nowrap","rowspan","scope","cols","rows","spellcheck","translate","hidden","dropzone","autoplay","controls","muted","preload","max","media","pubdate","srclang","kind","default","poster"
-        ),     //ÕâÊÇÒ»¸öÌØÊâµÄ±êÇ©£¬ÓÃÓÚ¼ì²âµ±Ä³¶ÎÊäÈë¿ÉÄÜÖ»ÊÇÄ³¸öhtml±êÇ©µÄÒ»²¿·ÖÊ±£¬Ê¹ÓÃ¸ÃÌØÊâ±êÇ©Ç¿ĞĞ±ÕºÏ£¬²¢½øĞĞÔ¤ÏÈ¹ıÂË
-        "root" => array(),  //simple_html_domÄÚÖÃµÄÒ»¸öÌØÊâ±êÇ©£¬±íÊ¾DOMÊ÷µÄ¸ù½Úµã£¬²»ÔÊĞíÆä¸½´øÈÎºÎÊôĞÔ£¬Í¬Ê±ÔÚÊä³öÊ±½«Ìø¹ı¸Ã±êÇ©
-        "text" => array()   //simple_html_domÄÚÖÃµÄÒ»¸öÌØÊâ±êÇ©£¬±íÊ¾±êÇ©ÖĞ°üº¬µÄÒ»¶ÎÎÄ±¾£¬²»ÔÊĞíÆä¸½´øÈÎºÎÊôĞÔ£¬Êä³öÊ±»á¾­¹ı´¦ÀíºóÕ¹Ê¾
+        ),     //è¿™æ˜¯ä¸€ä¸ªç‰¹æ®Šçš„æ ‡ç­¾ï¼Œç”¨äºæ£€æµ‹å½“æŸæ®µè¾“å…¥å¯èƒ½åªæ˜¯æŸä¸ªhtmlæ ‡ç­¾çš„ä¸€éƒ¨åˆ†æ—¶ï¼Œä½¿ç”¨è¯¥ç‰¹æ®Šæ ‡ç­¾å¼ºè¡Œé—­åˆï¼Œå¹¶è¿›è¡Œé¢„å…ˆè¿‡æ»¤
+        "root" => array(),  //simple_html_domå†…ç½®çš„ä¸€ä¸ªç‰¹æ®Šæ ‡ç­¾ï¼Œè¡¨ç¤ºDOMæ ‘çš„æ ¹èŠ‚ç‚¹ï¼Œä¸å…è®¸å…¶é™„å¸¦ä»»ä½•å±æ€§ï¼ŒåŒæ—¶åœ¨è¾“å‡ºæ—¶å°†è·³è¿‡è¯¥æ ‡ç­¾
+        "text" => array()   //simple_html_domå†…ç½®çš„ä¸€ä¸ªç‰¹æ®Šæ ‡ç­¾ï¼Œè¡¨ç¤ºæ ‡ç­¾ä¸­åŒ…å«çš„ä¸€æ®µæ–‡æœ¬ï¼Œä¸å…è®¸å…¶é™„å¸¦ä»»ä½•å±æ€§ï¼Œè¾“å‡ºæ—¶ä¼šç»è¿‡å¤„ç†åå±•ç¤º
     );
 
     /*
-     * ÉèÖÃÄ³Ğ©±êÇ©±ØÑ¡ÊôĞÔ
-     * Èç¹û¸Ã±ØÑ¡ÊôĞÔÇ¿ÖÆÎªÌØ¶¨Öµ£¬Ôò±êÃ÷ÌØ¶¨Öµ£¬·ñÔò±ê¼Çnull¡£
+     * è®¾ç½®æŸäº›æ ‡ç­¾å¿…é€‰å±æ€§
+     * å¦‚æœè¯¥å¿…é€‰å±æ€§å¼ºåˆ¶ä¸ºç‰¹å®šå€¼ï¼Œåˆ™æ ‡æ˜ç‰¹å®šå€¼ï¼Œå¦åˆ™æ ‡è®°nullã€‚
      */
     private $_TAG_BASE_ATTRS = array(
         "embed" => array("allowscriptaccess" => "nerver"),
@@ -154,7 +154,7 @@ class htmlFilter
     );
     
     /*
-     * Ö¸Ê¾ÄÄĞ©ÊôĞÔĞèÒª½øĞĞURL¹ıÂËµÄ
+     * æŒ‡ç¤ºå“ªäº›å±æ€§éœ€è¦è¿›è¡ŒURLè¿‡æ»¤çš„
      */
     private $_ATTR_URL_FILT = array(
         "src", "href"
@@ -180,7 +180,7 @@ class htmlFilter
         return $this;
     }
 
-    //³¢ÊÔ½âÎöHTML×Ö·û´®£¬²¢×ª»»ÎªDOM¶ÔÏó
+    //å°è¯•è§£æHTMLå­—ç¬¦ä¸²ï¼Œå¹¶è½¬æ¢ä¸ºDOMå¯¹è±¡
     private function _parserHTML($html_string="")
     {
         if (!is_string($html_string))
@@ -212,20 +212,20 @@ class htmlFilter
         $this->_safeDom = null;
         $this->_parserHTML($html_string);
 
-        //Èç¹ûµ±Ç°ÊäÈë°üº¬0¸öÓĞĞ§µÄHTML±êÇ©£¬ÔòÆô¶¯Ç¿ĞĞ±ÕºÏ
+        //å¦‚æœå½“å‰è¾“å…¥åŒ…å«0ä¸ªæœ‰æ•ˆçš„HTMLæ ‡ç­¾ï¼Œåˆ™å¯åŠ¨å¼ºè¡Œé—­åˆ
         if (!isset($this->_htmlDom->root->children) || empty($this->_htmlDom->root->children))
         {
-            //Èç¹ûÇ¿ĞĞ±ÕºÏºó»¹ÊÇÃ»ÓĞ·ûºÏÌõ¼şµÄHTML±êÇ©£¬Ôò·µ»ØÔ´×Ö·û´®£¨Ó¦¸ÃÀ´Ëµ²»»á·¢ÉúÕâ¸öÇé¿ö°ÉºÇºÇßÕ£©
+            //å¦‚æœå¼ºè¡Œé—­åˆåè¿˜æ˜¯æ²¡æœ‰ç¬¦åˆæ¡ä»¶çš„HTMLæ ‡ç­¾ï¼Œåˆ™è¿”å›æºå­—ç¬¦ä¸²ï¼ˆåº”è¯¥æ¥è¯´ä¸ä¼šå‘ç”Ÿè¿™ä¸ªæƒ…å†µå§å‘µå‘µå“’ï¼‰
             if ($autoclose === true)
             {
                 $this->_setError(self::ERR_CODE_EMPTY_HTML, self::ERR_MSG_EMPTY_HTML);
-                return substr($html_string, 8, -6);  //ÆşÍ·È¥Î²
+                return substr($html_string, 8, -3);  //æå¤´å»å°¾
             }
             
             if ($this->_opt_autoclosing !== true) return $html_string;
             
-            $html_string_1 = "<_ dir=\"" . $html_string . ' \'" />';   //Ìí¼ÓÌØÊâ±êÇ©
-            $html_string_2 = "<_ dir='" . $html_string . ' \'" />';   //Ìí¼ÓÌØÊâ±êÇ©
+            $html_string_1 = "<_ dir=\"" . $html_string . ' \'" />';   //æ·»åŠ ç‰¹æ®Šæ ‡ç­¾
+            $html_string_2 = "<_ dir='" . $html_string . ' \'" />';   //æ·»åŠ ç‰¹æ®Šæ ‡ç­¾
             
             $result1 = $this->safeHTML($html_string_1, true);
             $result2 = $this->safeHTML($html_string_2, true);
@@ -240,13 +240,13 @@ class htmlFilter
         $outputHTML = $this->_htmlDom->__toString();
         if ($autoclose === true && $this->_opt_autoclosing === true)
         {
-            if ($outputHTML === "<_ />" || $outputHTML === "<_>" || $outputHTML === "<_/>" || $outputHTML === "<_ >")   //Èç¹ûÌí¼ÓÌØÊâ±êÇ©ºó±»ÍêÕû¹ıÂË£¬ÔòÈÏÎªÌá½»µÄÄÚÈİ²»°üº¬ÈÎºÎHTMLÇãÏò£¬ÍêÈ«·ÅĞĞ
+            if ($outputHTML === "<_ />" || $outputHTML === "<_>" || $outputHTML === "<_/>" || $outputHTML === "<_ >")   //å¦‚æœæ·»åŠ ç‰¹æ®Šæ ‡ç­¾åè¢«å®Œæ•´è¿‡æ»¤ï¼Œåˆ™è®¤ä¸ºæäº¤çš„å†…å®¹ä¸åŒ…å«ä»»ä½•HTMLå€¾å‘ï¼Œå®Œå…¨æ”¾è¡Œ
             {
                 echo $outputHTML."<br />";
                 $outputHTML = $html_string;
             }
             
-            return substr($outputHTML, 8, -6);
+            return substr($outputHTML, 8, -3);
         }
         return $outputHTML;
 
@@ -274,18 +274,18 @@ class htmlFilter
                 if ($_sub_node instanceof simple_html_dom_node)
                 {
 
-                    //¼ì²é±êÇ©ÊÇ·ñÔÊĞí
+                    //æ£€æŸ¥æ ‡ç­¾æ˜¯å¦å…è®¸
                     if (!isset($this->_ALLOW_TAGS[$_sub_node->tag]))
                     {
-                        //echo "±êÇ© {$_sub_node->tag}, ²»±»ÔÊĞí,ÒÑÉ¾³ı.\n";
+                        //echo "æ ‡ç­¾ {$_sub_node->tag}, ä¸è¢«å…è®¸,å·²åˆ é™¤.\n";
 
-                        //Çå¿ÕÕâ¸ö±êÇ©¼°ÏÂÃæµÄËùÓĞÄÚÈİ
-                        $node->nodes[$_key]->outertext = "";  //²»±ê×¼µÄÓÃ·¨£¬Ö±½Ó²Ù×÷ÁË¶ÔÏóÊôĞÔ
+                        //æ¸…ç©ºè¿™ä¸ªæ ‡ç­¾åŠä¸‹é¢çš„æ‰€æœ‰å†…å®¹
+                        $node->nodes[$_key]->outertext = "";  //ä¸æ ‡å‡†çš„ç”¨æ³•ï¼Œç›´æ¥æ“ä½œäº†å¯¹è±¡å±æ€§
                         $node->nodes[$_key]->innertext = "";
                         continue;
                     }
 
-                    //¼ì²éÊôĞÔÊÇ·ñÔÊĞí
+                    //æ£€æŸ¥å±æ€§æ˜¯å¦å…è®¸
                     foreach ($_sub_node->attr as $_attr_name => $_attr_value)
                     {
                         if (!in_array($_attr_name, $this->_ALLOW_TAGS[$_sub_node->tag]))
@@ -293,29 +293,29 @@ class htmlFilter
                             $node->nodes[$_key]->removeAttribute($_attr_name);
                         }else{
                             
-                            //¶ÔCSSÊôĞÔ£¨style£©½øĞĞ½âÎöºÍÔ¤¹ıÂË
+                            //å¯¹CSSå±æ€§ï¼ˆstyleï¼‰è¿›è¡Œè§£æå’Œé¢„è¿‡æ»¤
                             if ($_attr_name == "style")
                             {
-                                //½øĞĞÔ¤´¦Àí
-                                //ÕâÀïÏÈ²ÉÓÃÁË phith0n@wooyunµÄË¼Â·£¬±©Á¦¹ıÂË£¬½ÓÏÂÀ´´ıÓĞÊ±¼äºÃºÃÍêÉÆÒ»ÏÂcssParser
-                                //echo "ÕâÀïÊÇ¸ß¹óµÄSTYLE¹ıÂË£¬ºÇºÇßÕ{$_attr_value}<br />";
+                                //è¿›è¡Œé¢„å¤„ç†
+                                //è¿™é‡Œå…ˆé‡‡ç”¨äº† phith0n@wooyunçš„æ€è·¯ï¼Œæš´åŠ›è¿‡æ»¤ï¼Œæ¥ä¸‹æ¥å¾…æœ‰æ—¶é—´å¥½å¥½å®Œå–„ä¸€ä¸‹cssParser
+                                //echo "è¿™é‡Œæ˜¯é«˜è´µçš„STYLEè¿‡æ»¤ï¼Œå‘µå‘µå“’{$_attr_value}<br />";
                                 $_attr_value = str_replace('\\', ' ', $_attr_value);
                                 $_attr_value = str_replace(array('&#', '/*', '*/'), ' ', $_attr_value);
                                 $_attr_value = preg_replace('#e.*x.*p.*r.*e.*s.*s.*i.*o.*n#Uis', ' ', $_attr_value);
                                 $node->nodes[$_key]->setAttribute("style", $_attr_value);
                             }
                             
-                            //Èç¹ûÊÇĞèÒª¹ıÂËURLÄÚÈİµÄ£¬Ôò½øĞĞ¹ıÂË
+                            //å¦‚æœæ˜¯éœ€è¦è¿‡æ»¤URLå†…å®¹çš„ï¼Œåˆ™è¿›è¡Œè¿‡æ»¤
                             if (in_array($_attr_name, $this->_ATTR_URL_FILT))
                             {
                                 $safeURL = $this->_uf->safeURL($_attr_value);
                                 $node->nodes[$_key]->setAttribute($_attr_name, $safeURL);
                             }
 
-                            //¼ì²éÊôĞÔºÏ·¨ĞÔ
+                            //æ£€æŸ¥å±æ€§åˆæ³•æ€§
                             if (isset($this->_TAG_BASE_ATTRS[$_sub_node->tag][$_attr_name]))
                             {
-                                //Èç¹û¸ÃÊôĞÔÒª±»Ç¿ÖÆ¸²¸ÇµÄ£¬ÔòÇ¿ÖÆ¸²¸ÇËü
+                                //å¦‚æœè¯¥å±æ€§è¦è¢«å¼ºåˆ¶è¦†ç›–çš„ï¼Œåˆ™å¼ºåˆ¶è¦†ç›–å®ƒ
                                 if (!is_null($this->_TAG_BASE_ATTRS[$_sub_node->tag][$_attr_name]))
                                 {
                                     $node->nodes[$_key]->setAttribute($_attr_name, (string)$this->_TAG_BASE_ATTRS[$_sub_node->tag][$_attr_name]);
@@ -326,15 +326,15 @@ class htmlFilter
 
                     if (isset($this->_TAG_BASE_ATTRS[$_sub_node->tag]))
                     {
-                        //È»ºó¼ì²éÊÇ·ñÈ±Ê§±ØÑ¡ÊôĞÔ£¬È±Ê§±ØÑ¡ÊôĞÔµÄ£¬Ö±½Ó¿³ËÀ
+                        //ç„¶åæ£€æŸ¥æ˜¯å¦ç¼ºå¤±å¿…é€‰å±æ€§ï¼Œç¼ºå¤±å¿…é€‰å±æ€§çš„ï¼Œç›´æ¥ç æ­»
                         foreach ($this->_TAG_BASE_ATTRS[$_sub_node->tag] as $_base_attr_name => $_base_attr_value)
                         {
                             $_node_attr_value = $_sub_node->getAttribute($_base_attr_name);
                             if (empty($_node_attr_value))
                             {
-                                //echo "±êÇ© {$_sub_node->tag}, È±Ê§±ØÒªÊôĞÔ {$_base_attr_name},ÒÑÉ¾³ı.\n";
+                                //echo "æ ‡ç­¾ {$_sub_node->tag}, ç¼ºå¤±å¿…è¦å±æ€§ {$_base_attr_name},å·²åˆ é™¤.\n";
 
-                                $node->nodes[$_key]->outertext = "";  //²»±ê×¼µÄÓÃ·¨£¬Ö±½Ó²Ù×÷ÁË¶ÔÏóÊôĞÔ
+                                $node->nodes[$_key]->outertext = "";  //ä¸æ ‡å‡†çš„ç”¨æ³•ï¼Œç›´æ¥æ“ä½œäº†å¯¹è±¡å±æ€§
                                 $node->nodes[$_key]->innertext = "";
                                 break;
                             }
