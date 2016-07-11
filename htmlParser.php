@@ -941,13 +941,13 @@ class simple_html_dom
         // Per sourceforge http://sourceforge.net/tracker/?func=detail&aid=2949097&group_id=218559&atid=1044037
         // Script tags removal now preceeds style tag removal.
         // strip out <script> tags
-        $this->remove_noise("'<\s*script[^>]*[^/]>(.*?)<\s*/\s*script\s*>'is");
-        $this->remove_noise("'<\s*script\s*>(.*?)<\s*/\s*script\s*>'is");
+        //$this->remove_noise("'<\s*script[^>]*[^/]>(.*?)<\s*/\s*script\s*>'is");
+        //$this->remove_noise("'<\s*script\s*>(.*?)<\s*/\s*script\s*>'is");
         // strip out <style> tags
-        $this->remove_noise("'<\s*style[^>]*[^/]>(.*?)<\s*/\s*style\s*>'is");
-        $this->remove_noise("'<\s*style\s*>(.*?)<\s*/\s*style\s*>'is");
+        //$this->remove_noise("'<\s*style[^>]*[^/]>(.*?)<\s*/\s*style\s*>'is");
+        //$this->remove_noise("'<\s*style\s*>(.*?)<\s*/\s*style\s*>'is");
         // strip out preformatted tags
-        $this->remove_noise("'<\s*(?:code)[^>]*>(.*?)<\s*/\s*(?:code)\s*>'is");
+        //$this->remove_noise("'<\s*(?:code)[^>]*>(.*?)<\s*/\s*(?:code)\s*>'is");
         // strip out server side scripts
         $this->remove_noise("'(<\?)(.*?)(\?>)'s", true);
         // strip smarty scripts
