@@ -1,7 +1,13 @@
 <?php
 
 include_once 'urlFilter.php';
-include_once 'htmlParser.php';
+
+//加入两个不同的htmlParser，默认使用DOMDocument
+if (!class_exists("DOMDocument"))
+{
+    include_once 'htmlParser.php';
+    define("_USE_CUSTOM_HTML_PARSER_", true);
+}
 //include_once 'cssParser.php';
 
 
@@ -10,7 +16,6 @@ class htmlFilter
     private $_lastError = 0;
     private $_lastErrorMsg = "";
     private $_htmlDom = null;
-    private $_safeDom = null;
     private $_uf = null;
     
     //：：：选项：：：是否在输入数据中无法找到任意有效HTML标签时尝试自动闭合
@@ -18,7 +23,7 @@ class htmlFilter
     //但该选项开启可能会造成错误过滤，例如输入：if select == "abcdefg" or select >= 5 then aaa = "ccc"
     //将产生输出：if select == ">= 5 then aaa = "ccc"
     //请自行决定是否默认开启，或使用setAutoClosing方法将其动态开关
-    private $_opt_autoclosing = true;
+    private $_opt_autoclosing = false;
 
     const ERR_CODE_OK = 0;
     const ERR_CODE_BAD_HTML = 1;
@@ -163,8 +168,8 @@ class htmlFilter
 
     function __construct($html=null, $autoclosing=null)
     {
-        if (!class_exists("simple_html_dom", true)) exit(self::ERR_MSG_SHD_NOT_FOUND);
-        if (!class_exists("simple_html_dom_node", true)) exit(self::ERR_MSG_SHDN_NOT_FOUND);
+        if (!class_exists("simple_html_dom", true) && defined("_USE_CUSTOM_HTML_PARSER_")) exit(self::ERR_MSG_SHD_NOT_FOUND);
+        if (!class_exists("simple_html_dom_node", true) && defined("_USE_CUSTOM_HTML_PARSER_")) exit(self::ERR_MSG_SHDN_NOT_FOUND);
         //if (!class_exists("simple_css_parser", true)) exit(self::ERR_MSG_SCP_NOT_FOUND);
         if (!class_exists("simple_url_filter", true)) exit(self::ERR_MSG_SUF_NOT_FOUND);
         
@@ -189,7 +194,19 @@ class htmlFilter
             return false;
         }
 
-        $this->_htmlDom = new simple_html_dom($html_string);
+        if (defined("_USE_CUSTOM_HTML_PARSER_"))
+        {
+            $this->_htmlDom = new simple_html_dom($html_string);
+        }else{
+            $this->_htmlDom = new DOMDocument();
+            $this->_htmlDom->strictErrorChecking = false;
+            if (@$this->_htmlDom->loadHTML('<meta http-equiv="Content-Type" content="text/html; charset=utf-8"><HTMLFILTER>' .$html_string. "</HTMLFILTER>") !== true)
+            {
+                $this->_setError(self::ERR_CODE_BAD_HTML, self::ERR_MSG_BAD_HTML);
+                return false;
+            }
+        }
+        
         $this->_setError();
         return true;
     }
@@ -208,9 +225,26 @@ class htmlFilter
 
     function safeHTML($html_string="", $autoclose=false)
     {
-
-        $this->_safeDom = null;
-        $this->_parserHTML($html_string);
+        //变量初始化
+        $this->_setError(self::ERR_CODE_OK, self::ERR_MSG_OK);
+        $this->_htmlDom = null;
+        $outputHTML = "";
+        
+        if (!$this->_parserHTML($html_string)) return "";
+        
+        $nodesList = $this->_htmlDom->getElementsByTagName("*");
+        
+        if (!defined("_USE_CUSTOM_HTML_PARSER_"))
+        {
+            for ($i = 0; $i < $nodesList->length; $i++){
+                $nodeInfo = $nodesList->item($i);
+                $this->_safeHTML($nodeInfo);
+            }
+            
+            $outputHTML = strip_tags($this->_htmlDom->saveHTML(), "<".join("><", array_keys($this->_ALLOW_TAGS)).">");
+            return $outputHTML;
+        }
+        
 
         //如果当前输入包含0个有效的HTML标签，则启动强行闭合
         if (!isset($this->_htmlDom->root->children) || empty($this->_htmlDom->root->children))
@@ -242,7 +276,6 @@ class htmlFilter
         {
             if ($outputHTML === "<_ />" || $outputHTML === "<_>" || $outputHTML === "<_/>" || $outputHTML === "<_ >")   //如果添加特殊标签后被完整过滤，则认为提交的内容不包含任何HTML倾向，完全放行
             {
-                echo $outputHTML."<br />";
                 $outputHTML = $html_string;
             }
             
@@ -255,6 +288,62 @@ class htmlFilter
 
     private function _safeHTML(&$node)
     {
+        if (!defined("_USE_CUSTOM_HTML_PARSER_"))
+        {
+            //tagName合规性检查
+
+            if (isset($this->_ALLOW_TAGS[$node->nodeName]))
+            {
+                $_ALLOW_ATTRS = $this->_ALLOW_TAGS[$node->nodeName];
+                $attrsList = array();
+                
+                //属性合法性判断
+                if ($node->hasAttributes())
+                {
+                    foreach ($node->attributes as $attrName=>$attrObj)
+                    {
+                        if (!in_array($attrName, $_ALLOW_ATTRS))
+                        {
+                            //如果这个属性不被允许，则删除它
+                            $node->removeAttribute($attrName);
+                            
+                        }else{
+                            
+                            $attrsList[] = $attrName;
+                            //如果这个属性是style或src/href，则进一步确认合法性
+                            if ($attrName == "style")
+                            {
+                                    $_attr_value = str_replace('\\', ' ', $attrObj->value);
+                                    $_attr_value = str_replace(array('&#', '/*', '*/'), ' ', $_attr_value);
+                                    $_attr_value = preg_replace('#e.*x.*p.*r.*e.*s.*s.*i.*o.*n#Uis', ' ', $_attr_value);
+                                    $node->setAttribute("style", $_attr_value);
+                            }
+                            
+                            if (in_array($attrName, $this->_ATTR_URL_FILT))
+                            {
+                                $safeURL = $this->_uf->safeURL($attrObj->value);
+                                $node->setAttribute($attrName, $safeURL);
+                            }
+                        }
+                    }
+                }
+                
+                
+                //强制覆盖属性
+                if (isset($this->_TAG_BASE_ATTRS[$node->nodeName]))
+                {
+                    foreach ($this->_TAG_BASE_ATTRS[$node->nodeName] as $_BASE_ATTR => $_BASE_ATTR_VALUE)
+                    {
+                        if (!is_null($_BASE_ATTR_VALUE)) $node->setAttribute($_BASE_ATTR, $_BASE_ATTR_VALUE);
+                    }
+                }
+            }
+            
+            return true;
+        }
+        
+        
+        
         if (isset($node->children) && !empty($node->children))
         {
             foreach ($node->children as $_key=>$_children_node)
